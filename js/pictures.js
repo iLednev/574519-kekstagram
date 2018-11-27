@@ -8,31 +8,32 @@ var MAX_COMMENTS_COUNT = 4;
 var FIRST_AVATAR_NUMBER = 1;
 var LAST_AVATAR_NUMBER = 7;
 
-var getRandomNumber = function (min, max) {
+var getRandom = function (max, min) {
+  min = min || 0;
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-var getRandomIndex = function (arr) {
-  return Math.floor(Math.random() * arr.length);
+var getAvatarSource = function (lastNumber, firstNumber) {
+  return 'img/avatar-' + getRandom(lastNumber, firstNumber) + '.svg';
 };
 
-var getRandomBoolean = function () {
-  return Math.floor(Math.random() * 2);
-};
+var getRandomComments = function (times) {
+  var comments = [
+    'Всё отлично!',
+    'В целом всё неплохо. Но не всё.',
+    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+  ];
 
-var getAvatarSource = function (firstNumber, lastNumber) {
-  return 'img/avatar-' + getRandomNumber(firstNumber, lastNumber) + '.svg';
-};
-
-var getRandomComments = function (array) {
   var commentsArray = [];
-  var times = getRandomNumber(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
   for (var i = 0; i < times; i++) {
-    var firstString = array[getRandomIndex(array)];
+    var firstString = comments[getRandom(comments.length)];
     var string = firstString;
 
-    if (getRandomBoolean()) {
-      var secondString = array[getRandomIndex(array)];
+    if (getRandom()) {
+      var secondString = comments[getRandom(comments.length)];
       string += ' ' + secondString;
     }
     commentsArray.push(string);
@@ -40,16 +41,30 @@ var getRandomComments = function (array) {
   return commentsArray;
 };
 
-var generatePhotos = function () {
+var getRandomDescription = function () {
+  var descriptions = [
+    'Тестим новую камеру!',
+    'Затусили с друзьями на море',
+    'Как же круто тут кормят',
+    'Отдыхаем...',
+    'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
+    'Вот это тачка!'
+  ];
+
+  return descriptions[getRandom(descriptions.length)];
+};
+
+var createPhoto = function () {
+  var photos = [];
   for (var i = 1; i <= PHOTOS_COUNT; i++) {
     photos.push({
       imageUrl: 'photos/' + i + '.jpg',
-      likes: getRandomNumber(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
-      comments: getRandomComments(commentsArr),
-      description: descriptions[getRandomIndex(descriptions)]
-    }
-    );
+      likes: getRandom(MAX_LIKES_COUNT, MIN_LIKES_COUNT),
+      comments: getRandomComments(getRandom(MAX_COMMENTS_COUNT, MIN_COMMENTS_COUNT)),
+      description: getRandomDescription()
+    });
   }
+  return photos;
 };
 
 var createElements = function (index) {
@@ -67,44 +82,27 @@ var addElements = function () {
   pictures.appendChild(fragment);
 };
 
-var addBigPicture = function () {
-  var BigPhoto = photos[getRandomNumber(0, PHOTOS_COUNT)];
+var addBigPicture = function (bigPhoto) {
   var commentItem = [];
+
   descriptionAvatar.src = getAvatarSource(FIRST_AVATAR_NUMBER, LAST_AVATAR_NUMBER);
-  description.textContent = BigPhoto.description;
-  bigPictureImage.src = BigPhoto.imageUrl;
-  likesCount.textContent = BigPhoto.likes;
-  commentsCount.textContent = BigPhoto.comments.length;
+  description.textContent = bigPhoto.description;
+  bigPictureImage.src = bigPhoto.imageUrl;
+  likesCount.textContent = bigPhoto.likes;
+  commentsCount.textContent = bigPhoto.comments.length;
   commentsContainer.replaceChild(commentsList, commentsElement);
-  for (var i = 0; i < BigPhoto.comments.length; i++) {
+
+  for (var i = 0; i < bigPhoto.comments.length; i++) {
     commentItem[i] = comment.cloneNode(true);
     var commentImage = commentItem[i].querySelector('.social__picture');
     var commentText = commentItem[i].querySelector('.social__text');
     commentImage.src = getAvatarSource(FIRST_AVATAR_NUMBER, LAST_AVATAR_NUMBER);
-    commentText.textContent = BigPhoto.comments[i];
+    commentText.textContent = bigPhoto.comments[i];
     commentsList.appendChild(commentItem[i]);
   }
 };
 
-var photos = [];
-
-var commentsArr = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
-
-var descriptions = [
-  'Тестим новую камеру!',
-  'Затусили с друзьями на море',
-  'Как же круто тут кормят',
-  'Отдыхаем...',
-  'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
-  'Вот это тачка!'
-];
+var photos = createPhoto();
 
 var pictureElement = document.querySelector('#picture').content.querySelector('.picture');
 var pictures = document.querySelector('.pictures');
@@ -124,6 +122,5 @@ var commentsElement = bigPicture.querySelector('.social__comments');
 var commentsList = commentsElement.cloneNode();
 var comment = bigPicture.querySelector('.social__comment').cloneNode(true);
 
-generatePhotos();
 addElements();
-addBigPicture();
+addBigPicture(photos[getRandom(PHOTOS_COUNT)]);
