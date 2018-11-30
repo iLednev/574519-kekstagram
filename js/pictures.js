@@ -123,4 +123,40 @@ var commentsList = commentsElement.cloneNode();
 var comment = bigPicture.querySelector('.social__comment').cloneNode(true);
 
 addElements();
-addBigPicture(photos[getRandom(PHOTOS_COUNT)]);
+// addBigPicture(photos[getRandom(PHOTOS_COUNT)]);
+
+
+
+var uploadFile = document.querySelector('#upload-file');
+var editPicture = document.querySelector('.img-upload__overlay');
+var closeEditPictureButton = document.querySelector('#upload-cancel');
+var effectLevelPin = document.querySelector('.effect-level__pin');
+
+var openEditPicture = function () {
+  editPicture.classList.remove('hidden');
+  document.addEventListener('keydown', onEditPictureEscPress);
+};
+
+var closeEditPicture = function () {
+  editPicture.classList.add('hidden');
+  uploadFile.value = null;
+  document.removeEventListener('keydown', onEditPictureEscPress);
+};
+
+var onEditPictureEscPress = function (evt) {
+  if (evt.code === 'Escape') {
+    closeEditPicture();
+  }
+};
+
+uploadFile.addEventListener('change', function () {
+  openEditPicture();
+});
+
+closeEditPictureButton.addEventListener('click', function () {
+  closeEditPicture();
+});
+
+effectLevelPin.addEventListener('mouseup', function () {
+
+});
