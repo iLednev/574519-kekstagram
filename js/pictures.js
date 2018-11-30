@@ -224,7 +224,7 @@ addElements();
 pictures.addEventListener('click', function (evt) {
   var target = evt.target;
   if (target.classList === 'picture__img') {
-    console.log(target.classList);
+    addBigPicture(photos[2]);
   }
 });
 //
