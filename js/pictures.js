@@ -129,7 +129,8 @@ var createPhoto = function () {
       imageUrl: 'photos/' + i + '.jpg',
       likes: getRandom(MAX_LIKES_COUNT, MIN_LIKES_COUNT),
       comments: getRandomComments(getRandom(MAX_COMMENTS_COUNT, MIN_COMMENTS_COUNT)),
-      description: getRandomDescription()
+      description: getRandomDescription(),
+      id: i - 1
     });
   }
   return photos;
@@ -138,6 +139,7 @@ var createPhoto = function () {
 var createElements = function (index) {
   var picture = pictureElement.cloneNode(true);
   picture.querySelector('.picture__img').src = photos[index].imageUrl;
+  picture.querySelector('.picture__img').id = photos[index].id;
   picture.querySelector('.picture__comments').textContent = photos[index].comments.length;
   picture.querySelector('.picture__likes').textContent = photos[index].likes;
   return picture;
@@ -219,24 +221,13 @@ var effects = [
 ];
 
 addElements();
-// var mainPicturesList = document.querySelectorAll('.picture__img');
 
 pictures.addEventListener('click', function (evt) {
   var target = evt.target;
-  if (target.classList === 'picture__img') {
-    addBigPicture(photos[2]);
+  if (target.classList.contains('picture__img')) {
+    addBigPicture(photos[target.id]);
   }
 });
-//
-// var onPhotoClick = function (index) {
-//   mainPicturesList[index].addEventListener('click', function () {
-//     addBigPicture(photos[index]);
-//   });
-// };
-
-// for (var i = 0; i < photos.length; i++) {
-//   onPhotoClick(i);
-// }
 
 bigPictureCancel.addEventListener('click', function () {
   closeBigPicture();
