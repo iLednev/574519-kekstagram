@@ -70,12 +70,6 @@ var onEditPictureEscPress = function (evt) {
   }
 };
 
-var onPhotoClick = function (index) {
-  mainPicturesList[index].addEventListener('click', function () {
-    addBigPicture(photos[index]);
-  });
-};
-
 var onEffectClick = function (index) {
   effectsPreview[index].addEventListener('click', function () {
     if (index === 0) {
@@ -205,14 +199,6 @@ var editPicture = document.querySelector('.img-upload__overlay');
 var closeEditPictureButton = document.querySelector('#upload-cancel');
 var effectLevelValue = document.querySelector('.effect-level__value');
 var effectLevelPin = document.querySelector('.effect-level__pin');
-var effects = [
-  'effects__preview--none',
-  'effects__preview--chrome',
-  'effects__preview--sepia',
-  'effects__preview--marvin',
-  'effects__preview--phobos',
-  'effects__preview--heat'
-];
 var effectsPreview = document.querySelectorAll('.effects__preview');
 var pictureContainer = document.querySelector('.img-upload__preview');
 var picture = pictureContainer.querySelector('img');
@@ -223,12 +209,34 @@ var scaleControlBigger = document.querySelector('.scale__control--bigger');
 var scaleValue = 100;
 var effectLevelDepth = document.querySelector('.effect-level__depth');
 
-addElements();
-var mainPicturesList = document.querySelectorAll('.picture__img');
+var effects = [
+  'effects__preview--none',
+  'effects__preview--chrome',
+  'effects__preview--sepia',
+  'effects__preview--marvin',
+  'effects__preview--phobos',
+  'effects__preview--heat'
+];
 
-for (var i = 0; i < photos.length; i++) {
-  onPhotoClick(i);
-}
+addElements();
+// var mainPicturesList = document.querySelectorAll('.picture__img');
+
+pictures.addEventListener('click', function (evt) {
+  var target = evt.target;
+  if (target.classList === 'picture__img') {
+    console.log(target.classList);
+  }
+});
+//
+// var onPhotoClick = function (index) {
+//   mainPicturesList[index].addEventListener('click', function () {
+//     addBigPicture(photos[index]);
+//   });
+// };
+
+// for (var i = 0; i < photos.length; i++) {
+//   onPhotoClick(i);
+// }
 
 bigPictureCancel.addEventListener('click', function () {
   closeBigPicture();
@@ -261,7 +269,7 @@ scaleControlSmaller.addEventListener('click', function () {
 
 pictureEffectSlider.classList.add('hidden');
 
-for (i = 0; i < effects.length; i++) {
+for (var i = 0; i < effects.length; i++) {
   onEffectClick(i);
 }
 
