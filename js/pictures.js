@@ -19,7 +19,7 @@ var getAvatarSource = function (lastNumber, firstNumber) {
 
 var changeEffectLevel = function () {
   var pinCoords = 100;
-  effectLevelValue.value = pinCoords;
+  effectLevelValue.setAttribute('value', pinCoords);
   effectLevelPin.style.left = pinCoords + '%';
   effectLevelDepth.style.width = pinCoords + '%';
   switch (picture.className) {
