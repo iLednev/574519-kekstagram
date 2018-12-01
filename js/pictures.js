@@ -22,18 +22,24 @@ var changeEffectLevel = function () {
   effectLevelValue.value = pinCoords;
   effectLevelPin.style.left = pinCoords + '%';
   effectLevelDepth.style.width = pinCoords + '%';
-  if (picture.classList.contains('effects__preview--chrome')) {
-    picture.style.filter = 'grayscale(' + pinCoords / 100 + ')';
-  } else if (picture.classList.contains('effects__preview--sepia')) {
-    picture.style.filter = 'sepia(' + pinCoords / 100 + ')';
-  } else if (picture.classList.contains('effects__preview--marvin')) {
-    picture.style.filter = 'invert(' + pinCoords + '%)';
-  } else if (picture.classList.contains('effects__preview--phobos')) {
-    picture.style.filter = 'blur(' + pinCoords * 3 / 100 + 'px)';
-  } else if (picture.classList.contains('effects__preview--heat')) {
-    picture.style.filter = 'brightness(' + pinCoords * 2 / 100 + 1 + ')';
-  } else {
-    picture.style.filter = '';
+  switch (picture.className) {
+    case 'effects__preview--chrome':
+      picture.style.filter = 'grayscale(' + pinCoords / 100 + ')';
+      break;
+    case 'effects__preview--sepia':
+      picture.style.filter = 'sepia(' + pinCoords / 100 + ')';
+      break;
+    case 'effects__preview--marvin':
+      picture.style.filter = 'invert(' + pinCoords + '%)';
+      break;
+    case 'effects__preview--phobos':
+      picture.style.filter = 'blur(' + pinCoords * 3 / 100 + 'px)';
+      break;
+    case 'effects__preview--heat':
+      picture.style.filter = 'brightness(' + pinCoords * 2 / 100 + 1 + ')';
+      break;
+    default:
+      picture.style.filter = '';
   }
 };
 
@@ -64,6 +70,13 @@ var onBigPictureEscPress = function (evt) {
   }
 };
 
+var onUploadFileChange = function () {
+  scaleValue = 100;
+  picture.style.transform = 'scale(' + scaleValue / 100 + ')';
+  scaleControlValue.value = scaleValue + '%';
+  openEditPicture();
+};
+
 var onEditPictureEscPress = function (evt) {
   if (evt.code === 'Escape') {
     closeEditPicture();
@@ -81,6 +94,32 @@ var onEffectClick = function (index) {
     picture.classList.add(effects[index]);
     changeEffectLevel();
   });
+};
+
+var onScaleControlBiggerClick = function () {
+  scaleValue += 25;
+  if (scaleValue > 100) {
+    scaleValue = 100;
+  }
+  picture.style.transform = 'scale(' + scaleValue / 100 + ')';
+  scaleControlValue.value = scaleValue + '%';
+};
+
+var onScaleControlSmallerClick = function () {
+  scaleValue -= 25;
+  if (scaleValue < 0) {
+    scaleValue = 0;
+  }
+  picture.style.transform = 'scale(' + scaleValue / 100 + ')';
+  scaleControlValue.value = scaleValue + '%';
+};
+
+
+var onPicturesClick = function (evt) {
+  var target = evt.target;
+  if (target.classList.contains('picture__img')) {
+    addBigPicture(photos[target.id]);
+  }
 };
 
 // ------------------------------------------------------------------------------- //
@@ -222,41 +261,15 @@ var effects = [
 
 addElements();
 
-pictures.addEventListener('click', function (evt) {
-  var target = evt.target;
-  if (target.classList.contains('picture__img')) {
-    addBigPicture(photos[target.id]);
-  }
-});
+pictures.addEventListener('click', onPicturesClick);
 
-bigPictureCancel.addEventListener('click', function () {
-  closeBigPicture();
-});
+bigPictureCancel.addEventListener('click', closeBigPicture);
 
-uploadFile.addEventListener('change', function () {
-  scaleValue = 100;
-  picture.style.transform = 'scale(' + scaleValue / 100 + ')';
-  scaleControlValue.value = scaleValue + '%';
-  openEditPicture();
-});
+uploadFile.addEventListener('change', onUploadFileChange);
 
-scaleControlBigger.addEventListener('click', function () {
-  scaleValue += 25;
-  if (scaleValue > 100) {
-    scaleValue = 100;
-  }
-  picture.style.transform = 'scale(' + scaleValue / 100 + ')';
-  scaleControlValue.value = scaleValue + '%';
-});
+scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
 
-scaleControlSmaller.addEventListener('click', function () {
-  scaleValue -= 25;
-  if (scaleValue < 0) {
-    scaleValue = 0;
-  }
-  picture.style.transform = 'scale(' + scaleValue / 100 + ')';
-  scaleControlValue.value = scaleValue + '%';
-});
+scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
 
 pictureEffectSlider.classList.add('hidden');
 
@@ -264,10 +277,6 @@ for (var i = 0; i < effects.length; i++) {
   onEffectClick(i);
 }
 
-effectLevelPin.addEventListener('mouseup', function () {
-  changeEffectLevel();
-});
+effectLevelPin.addEventListener('mouseup', changeEffectLevel);
 
-closeEditPictureButton.addEventListener('click', function () {
-  closeEditPicture();
-});
+closeEditPictureButton.addEventListener('click', closeEditPicture);
