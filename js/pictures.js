@@ -64,6 +64,12 @@ var closeEditPicture = function () {
   document.removeEventListener('keydown', onEditPictureEscPress);
 };
 
+var onBigPictureOverlayClick = function (evt) {
+  if (evt.target === bigPicture) {
+    closeBigPicture();
+  }
+};
+
 var onBigPictureEscPress = function (evt) {
   if (evt.code === 'Escape') {
     closeBigPicture();
@@ -77,23 +83,32 @@ var onUploadFileChange = function () {
   openEditPicture();
 };
 
-var onEditPictureEscPress = function (evt) {
-  if (evt.code === 'Escape') {
+var onEditPictureOverlayClick = function (evt) {
+  if (evt.target === editPicture) {
     closeEditPicture();
   }
 };
 
-var onEffectClick = function (index) {
-  effectsPreview[index].addEventListener('click', function () {
-    if (index === 0) {
-      pictureEffectSlider.classList.add('hidden');
-    } else if (index !== 0 && pictureEffectSlider.classList.contains('hidden')) {
-      pictureEffectSlider.classList.remove('hidden');
-    }
+var onEditPictureEscPress = function (evt) {
+  if (evt.code === 'Escape' && document.activeElement !== hashtags && document.activeElement !== photoDescription) {
+    closeEditPicture();
+  }
+};
+
+var onEffectsListClick = function (evt) {
+  var effectTarget = evt.target;
+
+  if (effectTarget.id === 'effect-none') {
+    pictureEffectSlider.classList.add('hidden');
+  } else if (effectTarget.id === 'effect-none' !== 0 && pictureEffectSlider.classList.contains('hidden')) {
+    pictureEffectSlider.classList.remove('hidden');
+  }
+
+  if (effectTarget.classList.contains('effects__radio')) {
     picture.classList = '';
-    picture.classList.add(effects[index]);
+    picture.classList.add(effects[effectTarget.id]);
     changeEffectLevel();
-  });
+  }
 };
 
 var onScaleControlBiggerClick = function () {
@@ -114,6 +129,40 @@ var onScaleControlSmallerClick = function () {
   scaleControlValue.value = scaleValue + '%';
 };
 
+var onHashtagsInput = function () {
+  var hashtagsArray = hashtags.value.toLowerCase().split(' ');
+  var errors = 0;
+  var repeats = 0;
+  if (hashtagsArray.length > 5) {
+    hashtags.setCustomValidity('Хэш-теги не должны содержать пробелы и их должно быть не больше пяти');
+  } else if (hashtagsArray.length === 0 || hashtagsArray[0] === '') {
+    hashtags.setCustomValidity('');
+  } else {
+    hashtagsArray.forEach(function (item, index) {
+      if (hashtagsArray.includes(item, index + 1)) {
+        repeats++;
+      }
+      if (item === '#') {
+        hashtags.setCustomValidity('Хэш-тег не может состоять только из решётки');
+        errors++;
+      } else if (item[0] !== '#') {
+        hashtags.setCustomValidity('Хэш-тег должен начинаться с решётки');
+        errors++;
+      } else if (item.includes('#', 1)) {
+        hashtags.setCustomValidity('Хэш-теги должны разделяться пробелами');
+        errors++;
+      } else if (item.length > 20) {
+        hashtags.setCustomValidity('Хэш-тег должен быть не длиннее 20 символов (вместе с решёткой)');
+        errors++;
+      } else if (repeats) {
+        hashtags.setCustomValidity('Хэш-теги не должны повторяться');
+        errors++;
+      } else if (!errors) {
+        hashtags.setCustomValidity('');
+      }
+    });
+  }
+};
 
 var onPicturesClick = function (evt) {
   var target = evt.target;
@@ -237,10 +286,14 @@ var commentsList = commentsElement.cloneNode();
 var comment = bigPicture.querySelector('.social__comment').cloneNode(true);
 var uploadFile = document.querySelector('#upload-file');
 var editPicture = document.querySelector('.img-upload__overlay');
+var hashtags = document.querySelector('.text__hashtags');
+var photoDescription = document.querySelector('.text__description');
 var closeEditPictureButton = document.querySelector('#upload-cancel');
+
+var effectsList = document.querySelector('.effects__list');
 var effectLevelValue = document.querySelector('.effect-level__value');
 var effectLevelPin = document.querySelector('.effect-level__pin');
-var effectsPreview = document.querySelectorAll('.effects__preview');
+
 var pictureContainer = document.querySelector('.img-upload__preview');
 var picture = pictureContainer.querySelector('img');
 var pictureEffectSlider = document.querySelector('.img-upload__effect-level');
@@ -250,18 +303,20 @@ var scaleControlBigger = document.querySelector('.scale__control--bigger');
 var scaleValue = 100;
 var effectLevelDepth = document.querySelector('.effect-level__depth');
 
-var effects = [
-  'effects__preview--none',
-  'effects__preview--chrome',
-  'effects__preview--sepia',
-  'effects__preview--marvin',
-  'effects__preview--phobos',
-  'effects__preview--heat'
-];
+var effects = {
+  'effect-none': 'effects__preview--none',
+  'effect-chrome': 'effects__preview--chrome',
+  'effect-sepia': 'effects__preview--sepia',
+  'effect-marvin': 'effects__preview--marvin',
+  'effect-phobos': 'effects__preview--phobos',
+  'effect-heat': 'effects__preview--heat'
+};
 
 addElements();
 
 pictures.addEventListener('click', onPicturesClick);
+
+bigPicture.addEventListener('click', onBigPictureOverlayClick);
 
 bigPictureCancel.addEventListener('click', closeBigPicture);
 
@@ -273,10 +328,12 @@ scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
 
 pictureEffectSlider.classList.add('hidden');
 
-for (var i = 0; i < effects.length; i++) {
-  onEffectClick(i);
-}
+effectsList.addEventListener('click', onEffectsListClick);
 
 effectLevelPin.addEventListener('mouseup', changeEffectLevel);
 
+editPicture.addEventListener('click', onEditPictureOverlayClick);
+
 closeEditPictureButton.addEventListener('click', closeEditPicture);
+
+hashtags.addEventListener('input', onHashtagsInput);
