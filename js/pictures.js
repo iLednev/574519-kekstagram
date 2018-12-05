@@ -18,25 +18,26 @@ var getAvatarSource = function (lastNumber, firstNumber) {
 };
 
 var changeEffectLevel = function () {
-  var pinCoords = 100;
-  effectLevelValue.setAttribute('value', pinCoords);
-  effectLevelPin.style.left = pinCoords + '%';
-  effectLevelDepth.style.width = pinCoords + '%';
+  var maxCoords = effectLevelLine.offsetWidth;
+  var pinCoords = effectLevelPin.offsetLeft;
+  var percentCoords = Math.round(pinCoords * 100 / maxCoords);
+  effectLevelValue.setAttribute('value', percentCoords);
+  effectLevelDepth.style.width = percentCoords + '%';
   switch (picture.className) {
     case 'effects__preview--chrome':
-      picture.style.filter = 'grayscale(' + pinCoords / 100 + ')';
+      picture.style.filter = 'grayscale(' + pinCoords / maxCoords + ')';
       break;
     case 'effects__preview--sepia':
-      picture.style.filter = 'sepia(' + pinCoords / 100 + ')';
+      picture.style.filter = 'sepia(' + pinCoords / maxCoords + ')';
       break;
     case 'effects__preview--marvin':
-      picture.style.filter = 'invert(' + pinCoords + '%)';
+      picture.style.filter = 'invert(' + percentCoords + '%)';
       break;
     case 'effects__preview--phobos':
-      picture.style.filter = 'blur(' + pinCoords * 3 / 100 + 'px)';
+      picture.style.filter = 'blur(' + pinCoords * 3 / maxCoords + 'px)';
       break;
     case 'effects__preview--heat':
-      picture.style.filter = 'brightness(' + pinCoords * 2 / 100 + 1 + ')';
+      picture.style.filter = 'brightness(' + pinCoords * 2 / maxCoords + 1 + ')';
       break;
     default:
       picture.style.filter = '';
@@ -65,7 +66,7 @@ var closeEditPicture = function () {
 };
 
 var onBigPictureOverlayClick = function (evt) {
-  if (evt.target === bigPicture) {
+  if (evt.target.classList.contains('big-picture')) {
     closeBigPicture();
   }
 };
@@ -84,13 +85,13 @@ var onUploadFileChange = function () {
 };
 
 var onEditPictureOverlayClick = function (evt) {
-  if (evt.target === editPicture) {
+  if (evt.target.classList.contains('img-upload__overlay') && !document.activeElement.classList.contains('effect-level__pin')) {
     closeEditPicture();
   }
 };
 
 var onEditPictureEscPress = function (evt) {
-  if (evt.code === 'Escape' && document.activeElement !== hashtags && document.activeElement !== photoDescription) {
+  if (evt.code === 'Escape' && !document.activeElement.classList.contains('text__hashtags') && !document.activeElement.classList.contains('text__description')) {
     closeEditPicture();
   }
 };
@@ -107,6 +108,8 @@ var onEffectsListClick = function (evt) {
   if (effectTarget.classList.contains('effects__radio')) {
     picture.classList = '';
     picture.classList.add(effects[effectTarget.id]);
+    effectLevelPin.style.left = 100 + '%';
+    effectLevelDepth.style.width = 100 + '%';
     changeEffectLevel();
   }
 };
@@ -129,17 +132,61 @@ var onScaleControlSmallerClick = function () {
   scaleControlValue.value = scaleValue + '%';
 };
 
+var onEffectLevelPinMouseDown = function (evt) {
+  var coordX = evt.clientX;
+
+  var calculateCoords = function (moveEvt) {
+    var shift = coordX - moveEvt.clientX;
+    coordX = moveEvt.clientX;
+
+    effectLevelPin.style.left = (effectLevelPin.offsetLeft - shift) + 'px';
+
+    if (effectLevelPin.offsetLeft < 0) {
+      effectLevelPin.style.left = 0;
+    } else if (effectLevelPin.offsetLeft > effectLevelLine.offsetWidth) {
+      effectLevelPin.style.left = effectLevelLine.offsetWidth + 'px';
+    }
+  };
+
+  var onEffectLevelPinMouseMove = function (moveEvt) {
+    evt.preventDefault();
+    calculateCoords(moveEvt);
+    changeEffectLevel();
+  };
+
+  var onEffectLevelPinMouseUp = function (upEvt) {
+    calculateCoords(upEvt);
+    changeEffectLevel();
+
+    document.removeEventListener('mousemove', onEffectLevelPinMouseMove);
+    document.removeEventListener('mouseup', onEffectLevelPinMouseUp);
+  };
+
+  document.addEventListener('mousemove', onEffectLevelPinMouseMove);
+  document.addEventListener('mouseup', onEffectLevelPinMouseUp);
+};
+
 var onHashtagsInput = function () {
   var hashtagsArray = hashtags.value.toLowerCase().split(' ');
+  checkHashtags(hashtagsArray);
+};
+
+var onPicturesClick = function (evt) {
+  if (evt.target.classList.contains('picture__img')) {
+    addBigPicture(photos[evt.target.id]);
+  }
+};
+
+var checkHashtags = function (array) {
   var errors = 0;
   var repeats = 0;
-  if (hashtagsArray.length > 5) {
+  if (array.length > 5) {
     hashtags.setCustomValidity('Хэш-теги не должны содержать пробелы и их должно быть не больше пяти');
-  } else if (hashtagsArray.length === 0 || hashtagsArray[0] === '') {
+  } else if (array.length === 0 || array[0] === '') {
     hashtags.setCustomValidity('');
   } else {
-    hashtagsArray.forEach(function (item, index) {
-      if (hashtagsArray.includes(item, index + 1)) {
+    array.forEach(function (item, index) {
+      if (array.includes(item, index + 1)) {
         repeats++;
       }
       if (item === '#') {
@@ -161,13 +208,6 @@ var onHashtagsInput = function () {
         hashtags.setCustomValidity('');
       }
     });
-  }
-};
-
-var onPicturesClick = function (evt) {
-  var target = evt.target;
-  if (target.classList.contains('picture__img')) {
-    addBigPicture(photos[target.id]);
   }
 };
 
@@ -287,7 +327,7 @@ var comment = bigPicture.querySelector('.social__comment').cloneNode(true);
 var uploadFile = document.querySelector('#upload-file');
 var editPicture = document.querySelector('.img-upload__overlay');
 var hashtags = document.querySelector('.text__hashtags');
-var photoDescription = document.querySelector('.text__description');
+var effectLevelLine = document.querySelector('.effect-level__line');
 var closeEditPictureButton = document.querySelector('#upload-cancel');
 
 var effectsList = document.querySelector('.effects__list');
@@ -330,10 +370,10 @@ pictureEffectSlider.classList.add('hidden');
 
 effectsList.addEventListener('click', onEffectsListClick);
 
-effectLevelPin.addEventListener('mouseup', changeEffectLevel);
-
 editPicture.addEventListener('click', onEditPictureOverlayClick);
 
 closeEditPictureButton.addEventListener('click', closeEditPicture);
 
 hashtags.addEventListener('input', onHashtagsInput);
+
+effectLevelPin.addEventListener('mousedown', onEffectLevelPinMouseDown);
