@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var FIRST_AVATAR_NUMBER = 1;
+  var LAST_AVATAR_NUMBER = 7;
+
+  var getAvatarSource = function (lastNumber, firstNumber) {
+    return 'img/avatar-' + window.utils.getRandom(lastNumber, firstNumber) + '.svg';
+  };
+
   var openBigPicture = function () {
     bigPictureElement.classList.remove('hidden');
     document.addEventListener('keydown', onBigPictureEscPress);
@@ -11,7 +18,7 @@
     document.removeEventListener('keydown', onBigPictureEscPress);
   };
 
-  var onBigPictureOverlayClick = function (evt) {
+  var onOverlayClick = function (evt) {
     if (evt.target.classList.contains('big-picture')) {
       closeBigPicture();
     }
@@ -30,7 +37,7 @@
     openBigPicture();
     var commentItem = [];
 
-    descriptionAvatar.src = window.utils.getAvatarSource(window.utils.FIRST_AVATAR_NUMBER, window.utils.LAST_AVATAR_NUMBER);
+    descriptionAvatar.src = getAvatarSource(FIRST_AVATAR_NUMBER, LAST_AVATAR_NUMBER);
     description.textContent = bigPhoto.description;
     bigPictureImage.src = bigPhoto.imageUrl;
     likesCount.textContent = bigPhoto.likes;
@@ -43,7 +50,7 @@
       commentItem[i] = comment.cloneNode(true);
       var commentImage = commentItem[i].querySelector('.social__picture');
       var commentText = commentItem[i].querySelector('.social__text');
-      commentImage.src = window.utils.getAvatarSource(window.utils.FIRST_AVATAR_NUMBER, window.utils.LAST_AVATAR_NUMBER);
+      commentImage.src = getAvatarSource(FIRST_AVATAR_NUMBER, LAST_AVATAR_NUMBER);
       commentText.textContent = bigPhoto.comments[i];
       commentsList.appendChild(commentItem[i]);
     }
@@ -61,11 +68,11 @@
   var commentsList = commentsElement.cloneNode();
   var comment = bigPictureElement.querySelector('.social__comment').cloneNode(true);
 
-  bigPictureElement.addEventListener('click', onBigPictureOverlayClick);
+  bigPictureElement.addEventListener('click', onOverlayClick);
 
   bigPictureCancel.addEventListener('click', closeBigPicture);
 
   window.bigPicture = {
-    addBigPicture: addBigPicture
+    add: addBigPicture
   };
 })();

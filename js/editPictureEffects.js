@@ -1,7 +1,13 @@
 'use strict';
 
 (function () {
-  var onEffectLevelPinMouseDown = function (evt) {
+  var DEFAULT_EFFECT_VALUE = 100;
+
+  var hideSlider = function () {
+    effectSlider.classList.add('hidden');
+  };
+
+  var onPinMouseDown = function (evt) {
     var coordX = evt.clientX;
 
     var calculateCoords = function (moveEvt) {
@@ -17,22 +23,22 @@
       }
     };
 
-    var onEffectLevelPinMouseMove = function (moveEvt) {
+    var onPinMouseMove = function (moveEvt) {
       evt.preventDefault();
       calculateCoords(moveEvt);
       changeEffectLevel();
     };
 
-    var onEffectLevelPinMouseUp = function (upEvt) {
+    var onPinMouseUp = function (upEvt) {
       calculateCoords(upEvt);
       changeEffectLevel();
 
-      document.removeEventListener('mousemove', onEffectLevelPinMouseMove);
-      document.removeEventListener('mouseup', onEffectLevelPinMouseUp);
+      document.removeEventListener('mousemove', onPinMouseMove);
+      document.removeEventListener('mouseup', onPinMouseUp);
     };
 
-    document.addEventListener('mousemove', onEffectLevelPinMouseMove);
-    document.addEventListener('mouseup', onEffectLevelPinMouseUp);
+    document.addEventListener('mousemove', onPinMouseMove);
+    document.addEventListener('mouseup', onPinMouseUp);
   };
 
   var onEffectsListClick = function (evt) {
@@ -45,10 +51,10 @@
     }
 
     if (effectTarget.classList.contains('effects__radio')) {
-      window.editPicture.editPictureElement.classList = '';
-      window.editPicture.editPictureElement.classList.add(effects[effectTarget.id]);
-      effectLevelPin.style.left = window.utils.DEFAULT_EFFECT_VALUE + '%';
-      effectLevelDepth.style.width = window.utils.DEFAULT_EFFECT_VALUE + '%';
+      window.editPicture.element.classList = '';
+      window.editPicture.element.classList.add(effects[effectTarget.id]);
+      effectLevelPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+      effectLevelDepth.style.width = DEFAULT_EFFECT_VALUE + '%';
       changeEffectLevel();
     }
   };
@@ -59,24 +65,24 @@
     var percentCoords = Math.round(pinCoords * 100 / maxCoords);
     effectLevelValue.setAttribute('value', percentCoords);
     effectLevelDepth.style.width = percentCoords + '%';
-    switch (window.editPicture.editPictureElement.className) {
+    switch (window.editPicture.element.className) {
       case 'effects__preview--chrome':
-        window.editPicture.editPictureElement.style.filter = 'grayscale(' + pinCoords / maxCoords + ')';
+        window.editPicture.element.style.filter = 'grayscale(' + pinCoords / maxCoords + ')';
         break;
       case 'effects__preview--sepia':
-        window.editPicture.editPictureElement.style.filter = 'sepia(' + pinCoords / maxCoords + ')';
+        window.editPicture.element.style.filter = 'sepia(' + pinCoords / maxCoords + ')';
         break;
       case 'effects__preview--marvin':
-        window.editPicture.editPictureElement.style.filter = 'invert(' + percentCoords + '%)';
+        window.editPicture.element.style.filter = 'invert(' + percentCoords + '%)';
         break;
       case 'effects__preview--phobos':
-        window.editPicture.editPictureElement.style.filter = 'blur(' + pinCoords * 3 / maxCoords + 'px)';
+        window.editPicture.element.style.filter = 'blur(' + pinCoords * 3 / maxCoords + 'px)';
         break;
       case 'effects__preview--heat':
-        window.editPicture.editPictureElement.style.filter = 'brightness(' + (pinCoords * 2 / maxCoords + 1) + ')';
+        window.editPicture.element.style.filter = 'brightness(' + (pinCoords * 2 / maxCoords + 1) + ')';
         break;
       default:
-        window.editPicture.editPictureElement.style.filter = '';
+        window.editPicture.element.style.filter = '';
     }
   };
 
@@ -95,8 +101,10 @@
     'effect-heat': 'effects__preview--heat'
   };
 
-  effectSlider.classList.add('hidden');
-
   effectsList.addEventListener('click', onEffectsListClick);
-  effectLevelPin.addEventListener('mousedown', onEffectLevelPinMouseDown);
+  effectLevelPin.addEventListener('mousedown', onPinMouseDown);
+
+  window.editPictureEffects = {
+    hideSlider: hideSlider
+  };
 })();

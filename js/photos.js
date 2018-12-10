@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+
+  var PHOTOS_COUNT = 25;
+  var MIN_LIKES_COUNT = 15;
+  var MAX_LIKES_COUNT = 200;
+  var MIN_COMMENTS_COUNT = 1;
+  var MAX_COMMENTS_COUNT = 4;
+
   var getRandomComments = function (times) {
     var comments = [
       'Всё отлично!',
@@ -39,11 +46,11 @@
 
   var createPhoto = function () {
     var photos = [];
-    for (var i = 1; i <= window.utils.PHOTOS_COUNT; i++) {
+    for (var i = 1; i <= PHOTOS_COUNT; i++) {
       photos.push({
         imageUrl: 'photos/' + i + '.jpg',
-        likes: window.utils.getRandom(window.utils.MAX_LIKES_COUNT, window.utils.MIN_LIKES_COUNT),
-        comments: getRandomComments(window.utils.getRandom(window.utils.MAX_COMMENTS_COUNT, window.utils.MIN_COMMENTS_COUNT)),
+        likes: window.utils.getRandom(MAX_LIKES_COUNT, MIN_LIKES_COUNT),
+        comments: getRandomComments(window.utils.getRandom(MAX_COMMENTS_COUNT, MIN_COMMENTS_COUNT)),
         description: getRandomDescription(),
         id: i - 1
       });
@@ -52,6 +59,6 @@
   };
 
   window.photos = {
-    photos: createPhoto()
+    elements: createPhoto()
   };
 })();
