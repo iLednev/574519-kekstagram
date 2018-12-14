@@ -53,7 +53,6 @@
   var bigPictureCancel = bigPictureElement.querySelector('.big-picture__cancel');
   var likesCount = bigPictureElement.querySelector('.likes-count');
   var commentsContainer = bigPictureElement.querySelector('.big-picture__social');
-  var descriptionAvatar = bigPictureElement.querySelector('.social__picture');
   var description = bigPictureElement.querySelector('.social__caption');
   var commentsCount = bigPictureElement.querySelector('.comments-count');
   var commentsElement = bigPictureElement.querySelector('.social__comments');
