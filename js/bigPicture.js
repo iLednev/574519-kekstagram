@@ -1,13 +1,6 @@
 'use strict';
 
 (function () {
-  var FIRST_AVATAR_NUMBER = 1;
-  var LAST_AVATAR_NUMBER = 7;
-
-  var getAvatarSource = function (lastNumber, firstNumber) {
-    return 'img/avatar-' + window.utils.getRandom(lastNumber, firstNumber) + '.svg';
-  };
-
   var openBigPicture = function () {
     bigPictureElement.classList.remove('hidden');
     document.addEventListener('keydown', onBigPictureEscPress);
@@ -37,9 +30,8 @@
     openBigPicture();
     var commentItem = [];
 
-    descriptionAvatar.src = getAvatarSource(FIRST_AVATAR_NUMBER, LAST_AVATAR_NUMBER);
     description.textContent = bigPhoto.description;
-    bigPictureImage.src = bigPhoto.imageUrl;
+    bigPictureImage.src = bigPhoto.url;
     likesCount.textContent = bigPhoto.likes;
     commentsCount.textContent = bigPhoto.comments.length;
     if (commentsContainer.contains(commentsElement)) {
@@ -50,8 +42,8 @@
       commentItem[i] = comment.cloneNode(true);
       var commentImage = commentItem[i].querySelector('.social__picture');
       var commentText = commentItem[i].querySelector('.social__text');
-      commentImage.src = getAvatarSource(FIRST_AVATAR_NUMBER, LAST_AVATAR_NUMBER);
-      commentText.textContent = bigPhoto.comments[i];
+      commentImage.src = bigPhoto.comments[i].avatar;
+      commentText.textContent = bigPhoto.comments[i].message;
       commentsList.appendChild(commentItem[i]);
     }
   };

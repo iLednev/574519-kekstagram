@@ -765,7 +765,6 @@ main {
   border-radius: 5px;
 }
 
-
 /**
  * Кнопка для отправки изображения
  */
@@ -1261,7 +1260,8 @@ main {
  */
 
 .error,
-.success {
+.success,
+.photos-error {
   position: fixed;
   display: flex;
   justify-content: center;
@@ -1271,13 +1271,14 @@ main {
   top: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 4;
 
   background-color: rgba(0, 0, 0, 0.8);
 }
 
 .error__inner,
-.success__inner {
+.success__inner,
+.photos-error__inner {
   position: relative;
   width: 600px;
   padding: 50px 20px;
@@ -1299,7 +1300,8 @@ main {
   border-radius: 10px;
 }
 
-.success__inner {
+.success__inner,
+.photos-error__inner {
   padding: 100px 20px;
   padding-bottom: 75px;
 }
@@ -1313,7 +1315,8 @@ main {
   font-size: 32px;
 }
 
-.success__title {
+.success__title,
+.photos-error__title {
   margin: 0;
   margin-bottom: 50px;
 
@@ -1338,7 +1341,8 @@ main {
 }
 
 .error__button,
-.success__button {
+.success__button,
+.photos-error__button {
   padding: 5px 10px;
 
   color: #ffffff;
@@ -1356,7 +1360,9 @@ main {
 .error__button:hover,
 .error__button:focus,
 .success__button:hover,
-.success__button:focus {
+.success__button:focus,
+.photos-error__button:hover,
+.photos-error__button:focus {
   opacity: 0.8;
 }
 
