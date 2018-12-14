@@ -42,7 +42,5 @@
 
   errorElementButton.addEventListener('click', onErrorButtonClick);
 
-
-
   window.backend.load(onLoad, onError);
 })();
