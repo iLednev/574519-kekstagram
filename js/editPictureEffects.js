@@ -29,38 +29,27 @@
 
     if (effectTarget.classList.contains('effects__radio')) {
       window.editPicture.element.classList = '';
-      window.editPicture.element.classList.add(effects[effectTarget.id]);
+      window.editPicture.element.classList.add(Effects[effectTarget.id]);
       effectLevelPin.style.left = DEFAULT_EFFECT_VALUE + '%';
       effectLevelDepth.style.width = DEFAULT_EFFECT_VALUE + '%';
       changeEffectLevel();
     }
   };
-
   var changeEffectLevel = function () {
     var maxCoords = effectLevelLine.offsetWidth;
     var pinCoords = effectLevelPin.offsetLeft;
     var percentCoords = Math.round(pinCoords * 100 / maxCoords);
+    var Filter = {
+      'effects__preview--chrome': 'grayscale(' + pinCoords / maxCoords + ')',
+      'effects__preview--sepia': 'sepia(' + pinCoords / maxCoords + ')',
+      'effects__preview--marvin': 'invert(' + percentCoords + '%)',
+      'effects__preview--phobos': 'blur(' + pinCoords * 3 / maxCoords + 'px)',
+      'effects__preview--heat': 'brightness(' + (pinCoords * 2 / maxCoords + 1) + ')',
+      'effects__preview--none': ''
+    };
     effectLevelValue.setAttribute('value', percentCoords);
     effectLevelDepth.style.width = percentCoords + '%';
-    switch (window.editPicture.element.className) {
-      case 'effects__preview--chrome':
-        window.editPicture.element.style.filter = 'grayscale(' + pinCoords / maxCoords + ')';
-        break;
-      case 'effects__preview--sepia':
-        window.editPicture.element.style.filter = 'sepia(' + pinCoords / maxCoords + ')';
-        break;
-      case 'effects__preview--marvin':
-        window.editPicture.element.style.filter = 'invert(' + percentCoords + '%)';
-        break;
-      case 'effects__preview--phobos':
-        window.editPicture.element.style.filter = 'blur(' + pinCoords * 3 / maxCoords + 'px)';
-        break;
-      case 'effects__preview--heat':
-        window.editPicture.element.style.filter = 'brightness(' + (pinCoords * 2 / maxCoords + 1) + ')';
-        break;
-      default:
-        window.editPicture.element.style.filter = '';
-    }
+    window.editPicture.element.style.filter = Filter[window.editPicture.element.className];
   };
 
   var effectsList = document.querySelector('.effects__list');
@@ -69,7 +58,7 @@
   var effectLevelLine = document.querySelector('.effect-level__line');
   var effectLevelPin = document.querySelector('.effect-level__pin');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
-  var effects = {
+  var Effects = {
     'effect-none': 'effects__preview--none',
     'effect-chrome': 'effects__preview--chrome',
     'effect-sepia': 'effects__preview--sepia',
