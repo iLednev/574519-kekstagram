@@ -1,6 +1,11 @@
 'use strict';
 
 (function () {
+  /**
+   * @callback
+   * Отображает загруженные картинки, применяет сортировку
+   * @param {array} data - массив объектов, загружаемый с сервера
+   */
   var onLoad = function (data) {
     var onPicturesClick = function (evt) {
       if (evt.target.classList.contains('picture__img')) {
@@ -15,18 +20,32 @@
     pictures.appendChild(fragment);
     pictures.addEventListener('click', onPicturesClick);
     window.filters.element.classList.remove('img-filters--inactive');
-    window.filters.sss(data, pictures);
+    window.filters.listener(data, pictures);
   };
 
+  /**
+   * @callback
+   * Выводит окно с сообщением об ошибке
+   * @param {string} message - сообщение об ошибке
+   */
   var onError = function (message) {
     main.appendChild(errorElement);
     errorElement.querySelector('.photos-error__title').textContent = message;
   };
 
+  /**
+   * @callback
+   * Закрывает окно с сообщением об ошибке по нажатию на errorElementButton
+   */
   var onErrorButtonClick = function () {
     main.removeChild(errorElement);
   };
 
+  /**
+   * Создаёт картинку, наполняет её данными и добавляет в documentFragment
+   * @param {object} element - объект с данными о картинке
+   * @param {object} fragment - пустой documentFragment
+   */
   var createElements = function (element, fragment) {
     var picture = pictureElement.cloneNode(true);
     picture.querySelector('.picture__img').src = element.url;

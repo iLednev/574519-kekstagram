@@ -1,21 +1,29 @@
 'use strict';
 
 (function () {
+  /**
+   * @callback
+   * Проводит проверку checkHashtags при вводе символов в поле hashtags
+   */
   var onHashtagsInput = function () {
     var hashtagsArray = hashtags.value.toLowerCase().split(' ');
     checkHashtags(hashtagsArray);
   };
 
-  var checkHashtags = function (array) {
+  /**
+   * Проверяет введённые в поле hashtags данные на соответствие условиям
+   * @param {array} arr - массив строк, подвергающийся проверке
+   */
+  var checkHashtags = function (arr) {
     var errors = 0;
     var repeats = 0;
-    if (array.length > 5) {
+    if (arr.length > 5) {
       hashtags.setCustomValidity('Хэш-теги не должны содержать пробелы и их должно быть не больше пяти');
-    } else if (array.length === 0 || array[0] === '') {
+    } else if (arr.length === 0 || arr[0] === '') {
       hashtags.setCustomValidity('');
     } else {
-      array.forEach(function (item, index) {
-        if (array.includes(item, index + 1)) {
+      arr.forEach(function (item, index) {
+        if (arr.includes(item, index + 1)) {
           repeats++;
         }
         if (item === '#') {
