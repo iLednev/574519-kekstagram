@@ -33,7 +33,10 @@ var filtersListener = function (data, pictures) {
       filtersMap[target.id].forEach(function (item) {
         window.elementss(item, fragment);
       });
-      pictures.appendChild(fragment);
+
+      window.setTimeout(function () {
+        pictures.appendChild(fragment);
+      }, 500);
     }
   });
 };
