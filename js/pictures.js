@@ -66,6 +66,8 @@
 
   window.backend.load(onLoad, onError);
 
-  window.elementss = createElements;
+  window.pictures = {
+    render: createElements
+  };
 
 })();

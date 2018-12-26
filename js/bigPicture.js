@@ -2,54 +2,53 @@
 
 (function () {
   /**
+   * Открывает bigPicture
+   */
+  var openBigPicture = function () {
+    bigPictureElement.classList.remove('hidden');
+    document.addEventListener('keydown', onBigPictureEscPress);
+    bigPictureElement.addEventListener('click', onOverlayClick);
+    bigPictureCancel.addEventListener('click', closeBigPicture);
+  };
+
+  /**
+   * Закрывает bigPicture
+   */
+  var closeBigPicture = function () {
+    bigPictureElement.classList.add('hidden');
+    document.removeEventListener('keydown', onBigPictureEscPress);
+    bigPictureElement.removeEventListener('click', onOverlayClick);
+    bigPictureCancel.removeEventListener('click', closeBigPicture);
+  };
+
+  /**
+   * @callback
+   * Закрывает bigPicture по клику на оверлей
+   * @param {object} evt - передаётся автоматически, объект с данными о событии
+   */
+  var onOverlayClick = function (evt) {
+    if (evt.target.classList.contains('big-picture')) {
+      closeBigPicture();
+    }
+  };
+
+  /**
+   * @callback
+   * Закрывает bigPicture по нажатию на Escape
+   * @param {object} evt - передаётся автоматически, объект с данными о событии
+   */
+  var onBigPictureEscPress = function (evt) {
+    if (evt.code === 'Escape') {
+      closeBigPicture();
+    }
+  };
+
+  /**
    * Наполняет элемент bigPicture принятыми данными - картинкой, комментариями, лайками и т.д.
    * Выводит только первые 5 комментариев.
    * @param {object} bigPhoto - объект с информацией и адресом картинки, которая будет добавлена
    */
   var addBigPicture = function (bigPhoto) {
-    /**
-     * Открывает bigPicture
-     */
-    var openBigPicture = function () {
-      bigPictureElement.classList.remove('hidden');
-      document.addEventListener('keydown', onBigPictureEscPress);
-      bigPictureElement.addEventListener('click', onOverlayClick);
-      bigPictureCancel.addEventListener('click', closeBigPicture);
-    };
-
-    /**
-     * Закрывает bigPicture
-     */
-    var closeBigPicture = function () {
-      bigPictureElement.classList.add('hidden');
-      commentsLoader.removeEventListener('click', onCommentsLoaderClick);
-      document.removeEventListener('keydown', onBigPictureEscPress);
-      bigPictureElement.removeEventListener('click', onOverlayClick);
-      bigPictureCancel.removeEventListener('click', closeBigPicture);
-    };
-
-    /**
-     * @callback
-     * Закрывает bigPicture по клику на оверлей
-     * @param {object} evt - передаётся автоматически, объект с данными о событии
-     */
-    var onOverlayClick = function (evt) {
-      if (evt.target.classList.contains('big-picture')) {
-        closeBigPicture();
-      }
-    };
-
-    /**
-     * @callback
-     * Закрывает bigPicture по нажатию на Escape
-     * @param {object} evt - передаётся автоматически, объект с данными о событии
-     */
-    var onBigPictureEscPress = function (evt) {
-      if (evt.code === 'Escape') {
-        closeBigPicture();
-      }
-    };
-
     var commentItems = [];
     commentsLoader.classList.remove('hidden');
     commentsElement.innerHTML = '';
@@ -91,8 +90,11 @@
         commentsLoader.classList.add('hidden');
       }
       currentCommentsCount.textContent = commentsElement.childNodes.length;
+      if (commentItems.length !== commentsElement.childNodes.length) {
+        commentsLoader.addEventListener('click', onCommentsLoaderClick, {once: true});
+      }
     };
-    commentsLoader.addEventListener('click', onCommentsLoaderClick);
+    commentsLoader.addEventListener('click', onCommentsLoaderClick, {once: true});
   };
 
   var bigPictureElement = document.querySelector('.big-picture');

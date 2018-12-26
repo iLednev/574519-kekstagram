@@ -20,18 +20,22 @@ var filtersListener = function (data, pictures) {
       });
       target.classList.add('img-filters__button--active');
 
-      var filtersMap = {
-        'filter-popular': data,
-        'filter-new': filterNew(data),
-        'filter-discussed': filterDiscussed(data)
-      };
+      var currentFilter = data;
 
       childs.forEach(function (item) {
         item.remove();
       });
 
-      filtersMap[target.id].forEach(function (item) {
-        window.elementss(item, fragment);
+      if (target.id === 'filter-popular') {
+        currentFilter = data;
+      } else if (target.id === 'filter-new') {
+        currentFilter = filterNew(data);
+      } else if (target.id === 'filter-discussed') {
+        currentFilter = filterDiscussed(data);
+      }
+
+      currentFilter.forEach(function (item) {
+        window.pictures.render(item, fragment);
       });
 
       window.setTimeout(function () {

@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var TIMEOUT = 3000;
+
   /**
    * Получает изображения с сервера
    * @param {function} onLoad - функция, вызываемая в случае успешной загрузки данных с сервера
@@ -12,10 +14,10 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === Code.OK) {
+      if (xhr.status === CodeStatus.OK) {
         onLoad(xhr.response);
       } else {
-        onError(codeMap[xhr.status]);
+        onError(CodeValue[xhr.status]);
       }
     });
 
@@ -44,10 +46,10 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === Code.OK) {
+      if (xhr.status === CodeStatus.OK) {
         onLoad(xhr.response);
       } else {
-        onError(codeMap[xhr.status]);
+        onError(CodeValue[xhr.status]);
       }
     });
 
@@ -65,20 +67,18 @@
     xhr.send(data);
   };
 
-  var Code = {
+  var CodeStatus = {
     OK: 200,
     BAD_REQUEST: 400,
     NOT_FOUND: 404,
     INTERNAL_ERROR: 500
   };
 
-  var codeMap = {
+  var CodeValue = {
     400: 'Это не тот файл',
     404: 'Извините, Кекс всё сожрал',
     500: 'Извините, Кекс уронил сервер'
   };
-
-  var TIMEOUT = 3000;
 
   window.backend = {
     load: load,

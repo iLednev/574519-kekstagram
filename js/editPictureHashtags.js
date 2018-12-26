@@ -32,7 +32,7 @@
         } else if (item[0] !== '#') {
           hashtags.setCustomValidity('Хэш-тег должен начинаться с решётки');
           errors++;
-        } else if (item.includes('#', 1)) {
+        } else if (item.length > 20 && item.includes('#', 1)) {
           hashtags.setCustomValidity('Хэш-теги должны разделяться пробелами');
           errors++;
         } else if (item.length > 20) {
