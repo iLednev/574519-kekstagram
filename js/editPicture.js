@@ -4,9 +4,16 @@
   /**
    * @callback
    * Открывает окно редактирования изображения (editPicture) по выбору загружаемого файла
+   * И проверяет тип этого файла
    */
   var onUploadFileChange = function () {
-    openEditPicture();
+    var file = uploadFileInput.files[0];
+    if (file.type !== 'image/png' && file.type !== 'image/jpeg') {
+      window.pictures.addError('Неверный тип файла');
+      uploadForm.reset();
+    } else {
+      openEditPicture();
+    }
   };
 
   /**

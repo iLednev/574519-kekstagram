@@ -765,6 +765,10 @@ main {
   border-radius: 5px;
 }
 
+.text__error {
+  border: 2px solid crimson;
+}
+
 /**
  * Кнопка для отправки изображения
  */

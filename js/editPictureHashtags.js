@@ -6,7 +6,7 @@
    * Проводит проверку checkHashtags при вводе символов в поле hashtags
    */
   var onHashtagsInput = function () {
-    var hashtagsArray = hashtags.value.toLowerCase().split(' ');
+    var hashtagsArray = hashtags.value.toLowerCase().split(/\s+/);
     checkHashtags(hashtagsArray);
   };
 
@@ -17,6 +17,11 @@
   var checkHashtags = function (arr) {
     var errors = 0;
     var repeats = 0;
+
+    if (hashtags.classList.contains('text__error')) {
+      hashtags.classList.remove('text__error');
+    }
+
     if (arr.length > 5) {
       hashtags.setCustomValidity('Хэш-теги не должны содержать пробелы и их должно быть не больше пяти');
     } else if (arr.length === 0 || arr[0] === '') {
@@ -47,8 +52,11 @@
       });
     }
   };
-
   var hashtags = document.querySelector('.text__hashtags');
 
   hashtags.addEventListener('input', onHashtagsInput);
+
+  hashtags.addEventListener('invalid', function () {
+    hashtags.classList.add('text__error');
+  });
 })();
