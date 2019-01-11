@@ -2,22 +2,19 @@
 
 (function () {
   var DEFAULT_EFFECT_VALUE = 100;
-
-  var changePinPosition = function (shift) {
-    effectLevelPin.style.left = (effectLevelPin.offsetLeft - shift) + 'px';
-
-    if (effectLevelPin.offsetLeft < 0) {
-      effectLevelPin.style.left = 0;
-    } else if (effectLevelPin.offsetLeft > effectLevelLine.offsetWidth) {
-      effectLevelPin.style.left = effectLevelLine.offsetWidth + 'px';
-    }
-    changeEffectLevel();
-  };
-
+  /**
+   * Скрывает слайдер изменения эффекта
+   */
   var hideSlider = function () {
     effectSlider.classList.add('hidden');
   };
 
+  /**
+   * @callback
+   * При клике на миниатюру эффекта, применяет этот эффект к основной картинке.
+   * Если выбрана миниаютра без эффекта, слайдер скрывается.
+   * @param {object} evt - передаётся автоматически, объект с данными о событии
+   */
   var onEffectsListClick = function (evt) {
     var effectTarget = evt.target;
 
@@ -29,47 +26,39 @@
 
     if (effectTarget.classList.contains('effects__radio')) {
       window.editPicture.element.classList = '';
-      window.editPicture.element.classList.add(effects[effectTarget.id]);
-      effectLevelPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+      window.editPicture.element.classList.add(Effects[effectTarget.id]);
+      window.slider.pin.style.left = DEFAULT_EFFECT_VALUE + '%';
       effectLevelDepth.style.width = DEFAULT_EFFECT_VALUE + '%';
       changeEffectLevel();
     }
   };
 
+  /**
+   * Изменяет уровень эффекта в соответствии с положением ползунка sliderPin из блока slider
+   */
   var changeEffectLevel = function () {
-    var maxCoords = effectLevelLine.offsetWidth;
-    var pinCoords = effectLevelPin.offsetLeft;
+    var maxCoords = window.slider.line.offsetWidth;
+    var pinCoords = window.slider.pin.offsetLeft;
     var percentCoords = Math.round(pinCoords * 100 / maxCoords);
+    var Filter = {
+      'effects__preview--chrome': 'grayscale(' + pinCoords / maxCoords + ')',
+      'effects__preview--sepia': 'sepia(' + pinCoords / maxCoords + ')',
+      'effects__preview--marvin': 'invert(' + percentCoords + '%)',
+      'effects__preview--phobos': 'blur(' + pinCoords * 3 / maxCoords + 'px)',
+      'effects__preview--heat': 'brightness(' + (pinCoords * 2 / maxCoords + 1) + ')',
+      'effects__preview--none': ''
+    };
     effectLevelValue.setAttribute('value', percentCoords);
     effectLevelDepth.style.width = percentCoords + '%';
-    switch (window.editPicture.element.className) {
-      case 'effects__preview--chrome':
-        window.editPicture.element.style.filter = 'grayscale(' + pinCoords / maxCoords + ')';
-        break;
-      case 'effects__preview--sepia':
-        window.editPicture.element.style.filter = 'sepia(' + pinCoords / maxCoords + ')';
-        break;
-      case 'effects__preview--marvin':
-        window.editPicture.element.style.filter = 'invert(' + percentCoords + '%)';
-        break;
-      case 'effects__preview--phobos':
-        window.editPicture.element.style.filter = 'blur(' + pinCoords * 3 / maxCoords + 'px)';
-        break;
-      case 'effects__preview--heat':
-        window.editPicture.element.style.filter = 'brightness(' + (pinCoords * 2 / maxCoords + 1) + ')';
-        break;
-      default:
-        window.editPicture.element.style.filter = '';
-    }
+    window.editPicture.element.style.filter = Filter[window.editPicture.element.className];
   };
 
   var effectsList = document.querySelector('.effects__list');
   var effectSlider = document.querySelector('.img-upload__effect-level');
   var effectLevelValue = document.querySelector('.effect-level__value');
-  var effectLevelLine = document.querySelector('.effect-level__line');
-  var effectLevelPin = document.querySelector('.effect-level__pin');
+
   var effectLevelDepth = document.querySelector('.effect-level__depth');
-  var effects = {
+  var Effects = {
     'effect-none': 'effects__preview--none',
     'effect-chrome': 'effects__preview--chrome',
     'effect-sepia': 'effects__preview--sepia',
@@ -78,11 +67,11 @@
     'effect-heat': 'effects__preview--heat'
   };
 
+  hideSlider();
   effectsList.addEventListener('click', onEffectsListClick);
 
   window.editPictureEffects = {
     hideSlider: hideSlider,
-    levelPin: effectLevelPin,
-    changePinPosition: changePinPosition
+    changeEffectLevel: changeEffectLevel
   };
 })();

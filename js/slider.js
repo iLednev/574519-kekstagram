@@ -1,5 +1,26 @@
 'use strict';
 
+/**
+ * Изменяет положение ползунка
+ * @param {number} shift - смещение ползунка sliderPin относительно предыдущей позиции
+ */
+var changePinPosition = function (shift) {
+  sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
+
+  if (sliderPin.offsetLeft < 0) {
+    sliderPin.style.left = 0;
+  } else if (sliderPin.offsetLeft > sliderLine.offsetWidth) {
+    sliderPin.style.left = sliderLine.offsetWidth + 'px';
+  }
+  window.editPictureEffects.changeEffectLevel();
+};
+
+/**
+ * @callback
+ * По нажатию на sliderPin запоминает его положение, по перемещению мыши
+ * высчитывает новое положение ползунка и перемещает его
+ * @param {object} evt - передаётся автоматически, объект с данными о событии
+ */
 var onPinMouseDown = function (evt) {
   var coordX = evt.clientX;
 
@@ -12,11 +33,11 @@ var onPinMouseDown = function (evt) {
 
   var onPinMouseMove = function (moveEvt) {
     evt.preventDefault();
-    calculateCoords(moveEvt, window.editPictureEffects.changePinPosition);
+    calculateCoords(moveEvt, changePinPosition);
   };
 
   var onPinMouseUp = function (upEvt) {
-    calculateCoords(upEvt, window.editPictureEffects.changePinPosition);
+    calculateCoords(upEvt, changePinPosition);
 
     document.removeEventListener('mousemove', onPinMouseMove);
     document.removeEventListener('mouseup', onPinMouseUp);
@@ -26,4 +47,12 @@ var onPinMouseDown = function (evt) {
   document.addEventListener('mouseup', onPinMouseUp);
 };
 
-window.editPictureEffects.levelPin.addEventListener('mousedown', onPinMouseDown);
+var sliderLine = document.querySelector('.effect-level__line');
+var sliderPin = document.querySelector('.effect-level__pin');
+
+sliderPin.addEventListener('mousedown', onPinMouseDown);
+
+window.slider = {
+  pin: sliderPin,
+  line: sliderLine
+};

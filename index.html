@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <title>Кекстаграм</title>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Кекстаграм</title>
+  </head>
 
 <body>
   <main>
@@ -20,6 +20,7 @@
         <button type=button class="img-filters__button" id="filter-new">Новые</button>
         <button type=button class="img-filters__button" id="filter-discussed">Обсуждаемые</button>
       </form>
+
     </section>
 
     <!-- Контейнер для изображений от других пользователей -->
@@ -153,18 +154,8 @@
           </div>
 
           <!-- Комментарии к изображению -->
-          <div class="social__comment-count">5 из <span class="comments-count">125</span> комментариев</div>
+          <div class="social__comment-count"><span class="current-comment-count">5</span> из <span class="comments-count">125</span> комментариев</div>
           <ul class="social__comments">
-            <li class="social__comment">
-              <img class="social__picture" src="img/avatar-4.svg" alt="Аватар комментатора фотографии" width="35" height="35">
-              <p class="social__text">Мега фото! Просто обалдеть. Как вам так удалось?</p>
-            </li>
-            <li class="social__comment">
-              <img class="social__picture" src="img/avatar-3.svg" alt="Аватар комментатора фотографии" width="35" height="35">
-              <p class="social__text">
-                Да это фоташоп!!!!!!!!
-              </p>
-            </li>
           </ul>
 
           <!-- Кнопка для загрузки новой порции комментариев -->
@@ -248,7 +239,15 @@
     <div class="img-upload__message  img-upload__message--loading">Загружаем...</div>
   </template>
 
+  <template id="comment">
+    <li class="social__comment">
+      <img class="social__picture" src="" alt="Аватар комментатора фотографии" width="35" height="35">
+      <p class="social__text"></p>
+    </li>
+  </template>
+
   <script src="js/backend.js"></script>
+  <script src="js/filters.js"></script>
   <script src="js/pictures.js"></script>
   <script src="js/bigPicture.js"></script>
   <script src="js/editPicture.js"></script>
