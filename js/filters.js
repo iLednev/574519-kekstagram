@@ -2,14 +2,14 @@
 
 (function () {
   var NEW_PICTURES_LENGTH = 10;
-
+  var WAITING__TIME = 500;
   /**
    * Добавляет обработчик событий, отвечающий за сортировку картинок при клике на фильтр
    * @param {array} data - массив объектов, загружаемый с сервера
    * @param {object} pictures - элемент, содержащий картинки
    */
-  var filtersListener = function (data, pictures) {
-    filtersElement.addEventListener('click', function (evt) {
+  var createFiltersListener = function (data, pictures) {
+    filtersContainer.addEventListener('click', function (evt) {
       var target = evt.target;
       var childs = pictures.querySelectorAll('.picture');
 
@@ -28,20 +28,29 @@
         if (target.id === 'filter-popular') {
           currentFilter = data;
         } else if (target.id === 'filter-new') {
-          currentFilter = filterNew(data);
+          currentFilter = createFilterNew(data);
         } else if (target.id === 'filter-discussed') {
-          currentFilter = filterDiscussed(data);
+          currentFilter = createFilterDiscussed(data);
         }
 
         currentFilter.forEach(function (item) {
           window.pictures.render(item, fragment);
         });
 
-        window.setTimeout(function () {
+        var setTimerCallback = function () {
           pictures.appendChild(fragment);
-        }, 500);
+        };
+
+        setTimer(setTimerCallback);
       }
     });
+  };
+
+  var setTimer = function (callback) {
+    if (filtersTimer) {
+      window.clearTimeout(filtersTimer);
+    }
+    filtersTimer = window.setTimeout(callback, WAITING__TIME);
   };
 
   /**
@@ -49,14 +58,19 @@
    * @param {array} arr - массив объектов, подвергаемый сортировке
    * @return {array} - отсортированный массив
    */
-  var filterDiscussed = function (arr) {
+  var createFilterDiscussed = function (arr) {
     var cloneArr = arr.slice();
     return cloneArr.sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
   };
 
-  var filterNew = function (arr) {
+  /**
+   * Сортирует массив случайным образом и оставляет в нём не больше 10 картинок
+   * @param {array} arr - массив объектов, подвергаемый сортировке
+   * @return {array} - отсортированный массив
+   */
+  var createFilterNew = function (arr) {
     var cloneArr = arr.slice();
     for (var i = cloneArr.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -72,18 +86,13 @@
     return cloneArr;
   };
 
-  /**
-   * Сортирует массив случайным образом и оставляет в нём не больше 10 картинок
-   * @param {array} arr - массив объектов, подвергаемый сортировке
-   * @return {array} - отсортированный массив
-   */
-
-  var filtersElement = document.querySelector('.img-filters');
+  var filtersContainer = document.querySelector('.img-filters');
   var filterButtons = document.querySelectorAll('.img-filters__button');
   var fragment = document.createDocumentFragment();
+  var filtersTimer;
 
   window.filters = {
-    listener: filtersListener,
-    element: filtersElement
+    listener: createFiltersListener,
+    element: filtersContainer
   };
 })();

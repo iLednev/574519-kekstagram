@@ -12,6 +12,13 @@
       window.pictures.addError('Неверный тип файла');
       uploadForm.reset();
     } else {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        editPictureImage.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
       openEditPicture();
     }
   };
@@ -29,6 +36,7 @@
    * Функция открытия editPicture, добавляет обработчики событий для закрытия editPicture
    */
   var openEditPicture = function () {
+    window.editPictureScale.resetToDefault();
     editPictureOverlay.classList.remove('hidden');
     document.addEventListener('keydown', onEditPictureEscPress);
     editPictureOverlay.addEventListener('click', onOverlayClick);
@@ -40,31 +48,30 @@
    */
   var closeEditPicture = function () {
     editPictureOverlay.classList.add('hidden');
-    window.editPictureScale.resetToDefault();
     window.editPictureEffects.hideSlider();
     uploadFileInput.value = null;
-    editPictureElement.classList = '';
-    editPictureElement.style.filter = '';
+    editPictureImage.classList = '';
+    editPictureImage.style.filter = '';
     document.removeEventListener('keydown', onEditPictureEscPress);
     editPictureOverlay.removeEventListener('click', onOverlayClick);
     closeButton.removeEventListener('click', onCLoseButtonClick);
   };
 
   /**
-   * Функция открытия errorElement, при вызове выводит окно с сообщением об ошибке
+   * Функция открытия errorContainer, при вызове выводит окно с сообщением об ошибке
    */
-  var openErrorElement = function () {
-    main.appendChild(errorElement);
+  var openErrorContainer = function () {
+    main.appendChild(errorContainer);
     document.removeEventListener('keydown', onEditPictureEscPress);
-    document.addEventListener('keydown', onErrorElementEscPress);
+    document.addEventListener('keydown', onErrorContainerEscPress);
   };
 
   /**
-   * Функция закрытия errorElement
+   * Функция закрытия errorContainer
    */
-  var closeErrorElement = function () {
-    main.removeChild(errorElement);
-    document.removeEventListener('keydown', onErrorElementEscPress);
+  var closeErrorContainer = function () {
+    main.removeChild(errorContainer);
+    document.removeEventListener('keydown', onErrorContainerEscPress);
     document.addEventListener('keydown', onEditPictureEscPress);
   };
 
@@ -96,7 +103,7 @@
    * и сбрасываются значения формы
    */
   var onFormLoad = function () {
-    main.appendChild(successElement);
+    main.appendChild(successContainer);
     closeEditPicture();
     uploadForm.reset();
   };
@@ -107,8 +114,8 @@
    * @param {string} message - сообщение об ошибке, берётся из родительской функции
    */
   var onFormError = function (message) {
-    openErrorElement();
-    errorElement.querySelector('.error__title').textContent = message;
+    openErrorContainer();
+    errorContainer.querySelector('.error__title').textContent = message;
   };
 
   /**
@@ -128,7 +135,7 @@
    * Закрывает окно с сообщением об успешной отправке формы при нажатии на successButton
    */
   var onSuccessButtonClick = function () {
-    main.removeChild(successElement);
+    main.removeChild(successContainer);
   };
 
   /**
@@ -136,7 +143,7 @@
    * Закрывает окно с сообщением об ошибке при нажатии на errorRepeat
    */
   var onErrorRepeatClick = function () {
-    closeErrorElement();
+    closeErrorContainer();
   };
 
   /**
@@ -146,7 +153,7 @@
   var onErrorAnotherFileClick = function () {
     closeEditPicture();
     uploadForm.reset();
-    closeErrorElement();
+    closeErrorContainer();
   };
 
   /**
@@ -154,9 +161,9 @@
    * Закрывает окно с сообщением об ошибке при клике по оверлею
    * @param {object} evt - передаётся автоматически, объект с данными о событии
    */
-  var onErrorElementOverlayClick = function (evt) {
+  var onErrorContainerOverlayClick = function (evt) {
     if (evt.target.classList.contains('error')) {
-      closeErrorElement();
+      closeErrorContainer();
     }
   };
 
@@ -165,25 +172,25 @@
    * Закрывает окно с сообщением об ошибке при нажатии на Escape
    * @param {object} evt - передаётся автоматически, объект с данными о событии
    */
-  var onErrorElementEscPress = function (evt) {
+  var onErrorContainerEscPress = function (evt) {
     if (evt.code === 'Escape') {
-      closeErrorElement();
+      closeErrorContainer();
     }
   };
 
   var uploadFileInput = document.querySelector('#upload-file');
   var closeButton = document.querySelector('#upload-cancel');
   var pictureContainer = document.querySelector('.img-upload__preview');
-  var editPictureElement = pictureContainer.querySelector('img');
+  var editPictureImage = pictureContainer.querySelector('img');
   var editPictureOverlay = document.querySelector('.img-upload__overlay');
   var uploadForm = document.querySelector('.img-upload__form');
 
-  var successElement = document.querySelector('#success').content.querySelector('.success');
-  var successButton = successElement.querySelector('.success__button');
+  var successContainer = document.querySelector('#success').content.querySelector('.success');
+  var successButton = successContainer.querySelector('.success__button');
 
-  var errorElement = document.querySelector('#error').content.querySelector('.error');
-  var errorRepeat = errorElement.querySelector('.js-repeat');
-  var errorAnotherFile = errorElement.querySelector('.js-another');
+  var errorContainer = document.querySelector('#error').content.querySelector('.error');
+  var errorRepeat = errorContainer.querySelector('.js-repeat');
+  var errorAnotherFile = errorContainer.querySelector('.js-another');
   var main = document.querySelector('main');
 
   uploadFileInput.addEventListener('change', onUploadFileChange);
@@ -191,11 +198,11 @@
   successButton.addEventListener('click', onSuccessButtonClick);
 
   window.editPicture = {
-    element: editPictureElement
+    element: editPictureImage
   };
 
   uploadForm.addEventListener('submit', onFormSubmit);
   errorRepeat.addEventListener('click', onErrorRepeatClick);
   errorAnotherFile.addEventListener('click', onErrorAnotherFileClick);
-  errorElement.addEventListener('click', onErrorElementOverlayClick);
+  errorContainer.addEventListener('click', onErrorContainerOverlayClick);
 })();
