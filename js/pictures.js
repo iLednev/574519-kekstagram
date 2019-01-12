@@ -48,7 +48,25 @@
    * Закрывает окно с сообщением об ошибке по нажатию на errorButton
    */
   var onErrorButtonClick = function () {
-    main.removeChild(errorContainer);
+    closeError();
+  };
+
+  var onErrorOverlayClick = function (evt) {
+    if (evt.target.classList.contains('photos-error')) {
+      closeError();
+    }
+  };
+
+  var onErrorEscPress = function (evt) {
+    if (evt.code === 'Escape') {
+      closeError();
+    }
+  };
+
+  var closeError = function () {
+    if (main === errorContainer.parentNode) {
+      main.removeChild(errorContainer);
+    }
   };
 
   /**
@@ -75,6 +93,8 @@
 
 
   errorButton.addEventListener('click', onErrorButtonClick);
+  errorContainer.addEventListener('click', onErrorOverlayClick);
+  document.addEventListener('keydown', onErrorEscPress);
 
   window.backend.load(onLoad, onError);
 
