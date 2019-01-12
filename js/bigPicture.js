@@ -83,6 +83,10 @@
     };
   };
 
+  var isHidden = function () {
+    return bigPictureContainer.classList.contains('hidden');
+  };
+
   var bigPictureContainer = document.querySelector('.big-picture');
   var bigPictureImage = bigPictureContainer.querySelector('.big-picture__img img');
   var bigPictureCancel = bigPictureContainer.querySelector('.big-picture__cancel');
@@ -96,6 +100,7 @@
 
   window.bigPicture = {
     container: bigPictureContainer,
-    Open: BigPicture
+    CreateElement: BigPicture,
+    isHidden: isHidden
   };
 })();

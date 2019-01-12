@@ -8,15 +8,15 @@
    */
   var onLoad = function (data) {
     var onPicturesClick = function (evt) {
-      if (evt.target.classList.contains('picture__img')) {
-        var picture = new window.bigPicture.Open(data[evt.target.parentElement.id]);
+      if (evt.target.classList.contains('picture__img') || evt.target.classList.contains('picture__info')) {
+        var picture = new window.bigPicture.CreateElement(data[evt.target.parentElement.id]);
         picture.open();
       }
     };
 
     var onPicturesEnterPress = function (evt) {
-      if (evt.target.classList.contains('picture') && evt.code === 'Enter' && window.bigPicture.container.classList.contains('hidden')) {
-        var picture = new window.bigPicture.Open(data[evt.target.id]);
+      if (evt.target.classList.contains('picture') && evt.code === 'Enter' && window.bigPicture.isHidden) {
+        var picture = new window.bigPicture.CreateElement(data[evt.target.id]);
         picture.open();
         pictures.lastChild.focus();
       }
@@ -30,7 +30,7 @@
     pictures.addEventListener('click', onPicturesClick);
     pictures.addEventListener('keydown', onPicturesEnterPress);
     window.filters.element.classList.remove('img-filters--inactive');
-    window.filters.listener(data, pictures);
+    window.filters.addListener(data, pictures);
   };
 
   /**
@@ -72,6 +72,7 @@
   var errorButton = errorContainer.querySelector('.photos-error__button');
   var main = document.querySelector('main');
   var body = document.querySelector('body');
+
 
   errorButton.addEventListener('click', onErrorButtonClick);
 
