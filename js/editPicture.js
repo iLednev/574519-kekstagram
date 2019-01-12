@@ -106,6 +106,7 @@
     main.appendChild(successContainer);
     closeEditPicture();
     uploadForm.reset();
+    document.addEventListener('keydown', onSuccessEscPress);
   };
 
   /**
@@ -136,6 +137,19 @@
    */
   var onSuccessButtonClick = function () {
     main.removeChild(successContainer);
+  };
+
+  var onSuccessOverlayClick = function (evt) {
+    if (evt.target.classList.contains('success')) {
+      main.removeChild(successContainer);
+    }
+  };
+
+  var onSuccessEscPress = function (evt) {
+    if (evt.code === 'Escape') {
+      main.removeChild(successContainer);
+      document.removeEventListener('keydown', onSuccessEscPress);
+    }
   };
 
   /**
@@ -196,6 +210,8 @@
   uploadFileInput.addEventListener('change', onUploadFileChange);
 
   successButton.addEventListener('click', onSuccessButtonClick);
+  successContainer.addEventListener('click', onSuccessOverlayClick);
+
 
   window.editPicture = {
     element: editPictureImage

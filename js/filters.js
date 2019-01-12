@@ -10,8 +10,23 @@
    */
   var createFiltersListener = function (data, pictures) {
     filtersContainer.addEventListener('click', function (evt) {
+      var setTimerCallback = function () {
+        filteredPictures = filtersMap[evt.target.id](data);
+
+        filteredPictures.forEach(function (item) {
+          window.pictures.render(item, fragment);
+        });
+        pictures.appendChild(fragment);
+      };
+
       var target = evt.target;
       var childs = pictures.querySelectorAll('.picture');
+      var filteredPictures = [];
+      var filtersMap = {
+        'filter-popular': createFilterPopular,
+        'filter-new': createFilterNew,
+        'filter-discussed': createFilterDiscussed
+      };
 
       if (target.classList.contains('img-filters__button')) {
         filterButtons.forEach(function (item) {
@@ -19,27 +34,9 @@
         });
         target.classList.add('img-filters__button--active');
 
-        var currentFilter = data;
-
         childs.forEach(function (item) {
           item.remove();
         });
-
-        if (target.id === 'filter-popular') {
-          currentFilter = data;
-        } else if (target.id === 'filter-new') {
-          currentFilter = createFilterNew(data);
-        } else if (target.id === 'filter-discussed') {
-          currentFilter = createFilterDiscussed(data);
-        }
-
-        currentFilter.forEach(function (item) {
-          window.pictures.render(item, fragment);
-        });
-
-        var setTimerCallback = function () {
-          pictures.appendChild(fragment);
-        };
 
         setTimer(setTimerCallback);
       }
@@ -47,10 +44,12 @@
   };
 
   var setTimer = function (callback) {
-    if (filtersTimer) {
-      window.clearTimeout(filtersTimer);
-    }
+    window.clearTimeout(filtersTimer);
     filtersTimer = window.setTimeout(callback, WAITING__TIME);
+  };
+
+  var createFilterPopular = function (arr) {
+    return arr;
   };
 
   /**
@@ -92,7 +91,7 @@
   var filtersTimer;
 
   window.filters = {
-    listener: createFiltersListener,
+    addListener: createFiltersListener,
     element: filtersContainer
   };
 })();
