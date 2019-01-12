@@ -146,7 +146,7 @@
   };
 
   var onSuccessEscPress = function (evt) {
-    if (evt.code === 'Escape') {
+    if (evt.code === 'Escape' && main === successContainer.parentNode) {
       main.removeChild(successContainer);
       document.removeEventListener('keydown', onSuccessEscPress);
     }
